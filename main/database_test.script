@@ -1,56 +1,58 @@
+local API_KEY = { token = "API_KEY" }
 
-local AUTH_TOKEN='YOUR_TOKEN'
-
-
+local function check_json()
+	local test_data = { 
+		['ss_01'] = {
+			[1] = {
+				mouse = {
+					dx = 0,
+					dy = 0,
+					mL = 0,
+					mR = 0
+				}
+			}
+		}
+	}
+	-- encode table -> json 
+	print(cjson.encode(test_data))
+end
 
 function init(self)
 	--
-	-- Test -> PUT
+	-- create new database instance
 	--
-	local function test_get()
-		local url = 'https://bool-8ba6d.firebaseio.com/users/000.json?auth=' .. AUTH_TOKEN
-		print(url)
-		http.request(url, 'GET', function(self,_, response)
-			print(response.response)
-		end, 
-		nil, nil, nil)
-	end
+	local database = require('firebase.database')
+	local fb = database:new('balloon-6da8b')
 	--
-	-- Test -> PUT
+	-- request token and execute requests:
 	--
-	local function test_put()
-		local post_data = '{ "005" : {"session_id": "004", "text":"TEST_POST"}}'
-		local url = 'https://bool-8ba6d.firebaseio.com/users/000/sessions.json?auth=' .. AUTH_TOKEN
-		http.request(url, 'PUT', function(self,_, response)
-			print(response.response)
-		end, 
-		nil, post_data, nil)
-	end
-	--
-	-- Test -> POST
-	--
-	local function test_post()
-		local post_data = '{"session_id": "004", "text":"TEST_POST"}'
-		local url = 'https://bool-8ba6d.firebaseio.com/users/000/sessions.json?auth=' .. AUTH_TOKEN
-		http.request(url, 'POST', function(self,_, response)
-			print(response.response)
-		end, 
-		nil, post_data, nil)
-	end
-	--
-	-- Test -> DELETE
-	--
-	local function test_delete()
-		local url = 'https://bool-8ba6d.firebaseio.com/users/000/sessions.json'
-		http.request(url, 'DELETE', function(self,_, response)
-			print(response.response)
-		end, 
-		nil, nil, nil)
-	end
-
-	test_get()
-	-- test_put()
-	-- test_post()
-	-- test_delete()
+	fb:request_token(API_KEY.token, function()
+		--
+		-- test GET 
+		--
+		fb:get('/users/000', function(res)
+			print('test_get: ' .. res.status)
+		end)
+		--
+		-- test PUT 
+		--
+		fb:put('/users/000', function(res)
+			print('test_put: ' .. res.status)
+		end,
+		{ ['test_put'] = true })
+		--
+		-- test POST
+		--
+		fb:get('/users/000', function(res)
+			print('test_post: ' .. res.status)
+		end,
+		{ ['test_post'] = true })
+		--
+		-- test DELETE 
+		--
+		fb:delete('/users/000/test_put', function(res)
+			print('test_delete: ' .. res.status)
+		end)
+	end)
 end
 
