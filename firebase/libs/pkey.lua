@@ -5,8 +5,8 @@ local sha2_sha256 = require "firebase.libs.sha2_256"
 
 local M = {}
 
-function M.sign(key, msg)
-	return hmac().setDigest(sha2_sha256).setKey(key).init().update(Stream.fromString(msg)).finish().asHex()
+function M.sign(pkey, string_to_sign)
+	return hmac().setDigest(sha2_sha256).setKey(pkey).init().update(Stream.fromString(string_to_sign)).finish().asHex()
 end
 
 return M

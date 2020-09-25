@@ -1,4 +1,4 @@
-local API_KEY = { token = "AIzaSyCfzQJ3lKBEcNhpmDEyB19S7WJuY_LzW74" }
+local API_KEY = { token = "API_KEY" } -- for Anonymous SignUp Test 
 
 local function check_json()
 	local test_data = { 
@@ -22,38 +22,38 @@ function init(self)
 	-- create new database instance
 	--
 	local database = require('firebase.database')
-	local fb = database:new('bool-8ba6d')
-	-- fb:auth_service_account('private_key.json')
+	local fb = database:new('bool-8ba6d') -- Your Project_ID
+	fb:auth_service_account('/KEY.json') -- Fetch this key from Firebase Database Private Key
 	--
 	-- request token and execute requests:
 	--
-	fb:request_token(API_KEY.token, function()
-		--
-		-- test GET 
-		--
-		fb:get('/users/000', function(res)
-			print('test_get: ' .. res.status)
-		end)
-		--
-		-- test PUT 
-		--
-		fb:put('/users/000', function(res)
-			print('test_put: ' .. res.status)
-		end,
-		{ ['test_put'] = true })
-		--
-		-- test POST
-		--
-		fb:get('/users/000', function(res)
-			print('test_post: ' .. res.status)
-		end,
-		{ ['test_post'] = true })
-		--
-		-- test DELETE 
-		--
-		fb:delete('/users/000/test_put', function(res)
-			print('test_delete: ' .. res.status)
-		end)
-	end)
+	-- fb:request_token(API_KEY.token, function()
+	-- 	--
+	-- 	-- test GET 
+	-- 	--
+	-- 	fb:get('/users/000', function(res)
+	-- 		print('test_get: ' .. res.status)
+	-- 	end)
+	-- 	--
+	-- 	-- test PUT 
+	-- 	--
+	-- 	fb:put('/users/000', function(res)
+	-- 		print('test_put: ' .. res.status)
+	-- 	end,
+	-- 	{ ['test_put'] = true })
+	-- 	--
+	-- 	-- test POST
+	-- 	--
+	-- 	fb:get('/users/000', function(res)
+	-- 		print('test_post: ' .. res.status)
+	-- 	end,
+	-- 	{ ['test_post'] = true })
+	-- 	--
+	-- 	-- test DELETE 
+	-- 	--
+	-- 	fb:delete('/users/000/test_put', function(res)
+	-- 		print('test_delete: ' .. res.status)
+	-- 	end)
+	-- end)
 end
 
