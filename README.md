@@ -10,7 +10,9 @@ The extension can be used on all platforms because it use only `http.request` fu
 
 - Note from Google OAuth :
 
-      Once you have a service account key file, you can use one of the Google API client libraries to generate a Google OAuth2 access token with the following required scopes:
+      Once you have a service account key file, 
+      you can use one of the Google API client libraries 
+      to generate a Google OAuth2 access token with the following required scopes:
 
           https://www.googleapis.com/auth/userinfo.email
           https://www.googleapis.com/auth/firebase.database
