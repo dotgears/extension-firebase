@@ -1,4 +1,4 @@
-local API_KEY = { token = "API_KEY" }
+local API_KEY = { token = "AIzaSyCfzQJ3lKBEcNhpmDEyB19S7WJuY_LzW74" }
 
 local function check_json()
 	local test_data = { 
@@ -22,7 +22,8 @@ function init(self)
 	-- create new database instance
 	--
 	local database = require('firebase.database')
-	local fb = database:new('balloon-6da8b')
+	local fb = database:new('bool-8ba6d')
+	-- fb:auth_service_account('private_key.json')
 	--
 	-- request token and execute requests:
 	--
