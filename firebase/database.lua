@@ -12,7 +12,7 @@ function Database:new(project_id)
 	-- Auth by Service Account of Firebase,
 	-- more secured than anonymous signup.
 	--
-	function obj:auth_service_account(path)
+	function obj:auth_service_account(path, exp_time)
 		token = nil
 		local serv = {}
 		if path and type(path) == 'string' then
@@ -47,7 +47,7 @@ function Database:new(project_id)
 			iss = serv.client_email or session.CLIENT_EMAIL,
 			scope = table.concat(scopes, ' '),
 			aud = url,
-			exp = os.time() + 60 * 5, -- 5 mins
+			exp = os.time() + exp_time, -- 5 mins
 			iat = os.time(),
 		}
 		-- ensure { headers . payloads } is base64url :

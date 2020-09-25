@@ -23,7 +23,7 @@ function init(self)
 	--
 	local database = require('firebase.database')
 	local fb = database:new('bool-8ba6d') -- Your Project_ID
-	fb:auth_service_account('/KEY.json') -- Fetch this key from Firebase Database Private Key
+	fb:auth_service_account('/KEY.json', 60 * 5) -- Fetch this key from Firebase Database Private Key
 	--
 	-- request token and execute requests:
 	--
