@@ -25,8 +25,7 @@ function Database:new(project_id)
 		-- LIBRARY: 
 		local json    = cjson
 		local crypto  = require 'crypto.crypto'
-		local basexx  = require 'firebase.libs.basexx'
-		local pkey    = require 'firebase.libs.pkey'
+		local base64  = require 'firebase.libs.base64'
 		--
 		-- URL for Google OAuth v2
 		--
@@ -50,22 +49,18 @@ function Database:new(project_id)
 			exp = os.time() + exp_time, -- 5 mins
 			iat = os.time(),
 		}
+		local signature = nil
+		local key = serv.private_key or session.PRIVATE_KEY
+		--
 		-- ensure { headers . payloads } is base64url :
 		--
-		header = assert(basexx.to_url64(json.encode(header)))
-		payloads = assert(basexx.to_url64(json.encode(payloads)))
-		local jwt = header .. '.' .. payloads
-		print(jwt)
+		header = assert(base64.encode(json.encode(header)))
+		payloads = assert(base64.encode(json.encode(payloads)))
+		signature = assert(base64.encode(rsa.sign_pkey(header .. '.' .. payloads, key)))
+		local jwt = header .. '.' .. payloads .. '.' .. signature
 		--
-		-- It's still right until here 
+		-- into assertions:
 		--
-		local jwt = jwt .. '.' .. assert(basexx.to_url64(
-		pkey.sign(serv.private_key or session.PRIVATE_KEY, jwt)))
-		--
-		-- The problem is here : 
-		-- As pkey.sign was wrong, so wrong if using hmac/SHA256 !
-		local jwt = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzY29wZSI6Imh0dHBzOlwvXC93d3cuZ29vZ2xlYXBpcy5jb21cL2F1dGhcL2ZpcmViYXNlLmRhdGFiYXNlIGh0dHBzOlwvXC93d3cuZ29vZ2xlYXBpcy5jb21cL2F1dGhcL3VzZXJpbmZvLmVtYWlsIiwiZXhwIjoxNjAxMDQ3MjMwLCJpc3MiOiJmaXJlYmFzZS1hZG1pbnNkay15cnFkdUBib29sLThiYTZkLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6XC9cL3d3dy5nb29nbGVhcGlzLmNvbVwvb2F1dGgyXC92NFwvdG9rZW4iLCJpYXQiOjE2MDEwNDY5MzB9.EF8XEKEAV8k/zYQhNEuo8rCVD2wtMknBhwEDKD/mvdXnqGXD9uuSKZ8hxanamIwSMv3HjaUYCHjGVKXPk7pfF7Xde1a78B6wXnUTjWndC56e0cwniGS1EiyQWGu2MmnCRb5EReR6yBZq11SlEpX+kYuWFh2YrpaBsZ8hzfFuqbrWL5cMs8fbFoL2eHJ/gIFfXf1hqKmAHoSggaRt8X/hgQdp10p3W7+S307IfeyssRcBnVwJzW/uH6dS1E5ooIsHhl/lbVnhnhD1k/ZIvFbzAJeJosjRljKCSPLliIDu7tnvYoyOqeGTmt4uakzOBBEsM8xXFZsh8UFrUkwH1DXNJQ=="
-		
 		local assertions = {
 			assertion   = jwt,
 			grant_type  = 'urn:ietf:params:oauth:grant-type:jwt-bearer'
