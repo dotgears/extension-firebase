@@ -25,9 +25,9 @@ function init(self)
 	local fb = database:new('bool-8ba6d') -- Your Project_ID
 	--
 	-- Fetch this key from Firebase Database Private Key :
-	-- function obj:auth_service_account(path, exp_time, callback)
+	--  obj:auth_service_account( path, exp_time, callback )
 	--
-	fb:auth_service_account('/KEY.json', 60 * 5, function(res)
+	fb:auth_service_account('/KEY.json', 60 * 60, function(res)
 		fb:get('/users/000', function(res)
 			print('test_get: ' .. res.status)
 		end)
@@ -46,30 +46,16 @@ function init(self)
 	--
 	-- request token and execute requests:
 	--
-	-- fb:request_token(API_KEY.token, function()
-	-- 	--
-	-- 	-- test GET 
-	-- 	--
+	-- fb:auth_by_apikey(API_KEY.token, function()
 	-- 	fb:get('/users/000', function(res)
 	-- 		print('test_get: ' .. res.status)
 	-- 	end)
-	-- 	--
-	-- 	-- test PUT 
-	-- 	--
 	-- 	fb:put('/users/000', function(res)
 	-- 		print('test_put: ' .. res.status)
-	-- 	end,
-	-- 	{ ['test_put'] = true })
-	-- 	--
-	-- 	-- test POST
-	-- 	--
+	-- 	end, { ['test_put'] = true })
 	-- 	fb:get('/users/000', function(res)
 	-- 		print('test_post: ' .. res.status)
-	-- 	end,
-	-- 	{ ['test_post'] = true })
-	-- 	--
-	-- 	-- test DELETE 
-	-- 	--
+	-- 	end, { ['test_post'] = true })
 	-- 	fb:delete('/users/000/test_put', function(res)
 	-- 		print('test_delete: ' .. res.status)
 	-- 	end)

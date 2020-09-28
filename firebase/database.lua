@@ -24,7 +24,7 @@ function Database:new(project_id)
 		end
 		-- LIBRARY: 
 		local json    = cjson
-		local crypto  = require 'crypto.crypto'
+		-- local crypto  = require 'crypto.crypto'
 		local base64  = require 'firebase.libs.base64'
 		--
 		-- URL for Google OAuth v2
@@ -46,7 +46,7 @@ function Database:new(project_id)
 			iss = serv.client_email or session.CLIENT_EMAIL,
 			scope = table.concat(scopes, ' '),
 			aud = url,
-			exp = os.time() + exp_time, -- 5 mins
+			exp = os.time() + exp_time,
 			iat = os.time(),
 		}
 		local signature = nil
@@ -56,7 +56,7 @@ function Database:new(project_id)
 		--
 		header = assert(base64.encode(json.encode(header)))
 		payloads = assert(base64.encode(json.encode(payloads)))
-		signature = assert(base64.encode(rsa.sign_pkey(header .. '.' .. payloads, key)))
+		signature = assert(rsa.sign_pkey(header .. '.' .. payloads, key))
 		local jwt = header .. '.' .. payloads .. '.' .. signature
 		--
 		-- into assertions:
@@ -73,8 +73,7 @@ function Database:new(project_id)
 			if res.status == 200 then
 				local result = cjson.decode(res.response)
 				obj.access_token = result.access_token
-				print("database -- access_token granted: " .. obj.access_token)
-				print("database -- expire in " .. math.floor(result.expires_in/60) .. " minutes")
+				print("database -- Granted Access. Expire in " .. math.floor(result.expires_in/60) .. " minutes")
 			else
 				print("database -- " .. res.status .. ": " .. cjson.decode(res.response).error_description)
 			end
@@ -88,7 +87,7 @@ function Database:new(project_id)
 	-- curl 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=API_KEY' \
 	-- -H 'Content-Type: application/json' --data-binary '{"returnSecureToken":true}'
 	--
-	function obj:request_token(api_key, callback)
+	function obj:auth_by_apikey(api_key, callback)
 		access_token = nil -- clean up to avoid mistaken between 2 type of auth.
 		local token_url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=' .. api_key
 		local headers = {
@@ -111,9 +110,13 @@ function Database:new(project_id)
 	
 	local function base_request(project_id, path, callback, data, method)
 		local headers = nil 
-		local token = token and '?auth=' .. obj.token or '?access_token=' .. obj.access_token
+		if not (obj.token or obj.access_token) then 
+			print("database -- nil token")
+			return 
+		end
+		local token = obj.token and '?auth=' .. obj.token or '?access_token=' .. obj.access_token
 		local url = 'https://' .. project_id .. '.firebaseio.com' .. path ..  '.json' .. token
-		print(url)
+		-- print(url)
 		
 		http.request(url, method, function(self,_, response)
 			-- print(response.response)

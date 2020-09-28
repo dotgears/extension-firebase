@@ -13,6 +13,6 @@ input_method = HiddenInputField
 
 [project]
 title = extension-firebase
-dependencies = https://github.com/Melsoft-Games/defold-cjson/archive/master.zip,https://github.com/sonountaleban/defold-crypto/archive/master.zip
+dependencies = https://github.com/Melsoft-Games/defold-cjson/archive/master.zip
 custom_resources = KEY.json
 
