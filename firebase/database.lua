@@ -5,14 +5,14 @@ function Database:new(project_id)
 	-- saving info 
 	--
 	local obj = {}
-	local token = nil 				-- for Anonymous signup
-	local access_token = nil		-- for Auth Service Account
+	obj.token = nil 				-- for Anonymous signup
+	obj.access_token = nil		-- for Auth Service Account
 	local project_id = project_id
 	--
 	-- Auth by Service Account of Firebase,
 	-- more secured than anonymous signup.
 	--
-	function obj:auth_service_account(path, exp_time)
+	function obj:auth_service_account(path, exp_time, callback)
 		token = nil
 		local serv = {}
 		if path and type(path) == 'string' then
@@ -72,12 +72,13 @@ function Database:new(project_id)
 		http.request(url, 'POST', function(self,_,res)
 			if res.status == 200 then
 				local result = cjson.decode(res.response)
-				access_token = result.access_token
-				print("database -- access_token granted: " .. access_token)
+				obj.access_token = result.access_token
+				print("database -- access_token granted: " .. obj.access_token)
 				print("database -- expire in " .. math.floor(result.expires_in/60) .. " minutes")
 			else
 				print("database -- " .. res.status .. ": " .. cjson.decode(res.response).error_description)
 			end
+			callback(res)
 		end,
 		nil, cjson.encode(assertions), nil)
 	end
@@ -110,7 +111,7 @@ function Database:new(project_id)
 	
 	local function base_request(project_id, path, callback, data, method)
 		local headers = nil 
-		local token = token and '?auth=' .. token or '?access_token=' .. access_token
+		local token = token and '?auth=' .. obj.token or '?access_token=' .. obj.access_token
 		local url = 'https://' .. project_id .. '.firebaseio.com' .. path ..  '.json' .. token
 		print(url)
 		
