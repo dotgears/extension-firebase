@@ -17,48 +17,39 @@ local function check_json()
 	print(cjson.encode(test_data))
 end
 
+local firebase_auth = require('firebase.auth')
+local firebase_database = require('firebase.database')
+local firebase_messaging = require('firebase.messaging')
+
 function init(self)
-	--
-	-- create new database instance
-	--
-	local database = require('firebase.database')
-	local fb = database:new('bool-8ba6d') -- Your Project_ID
-	--
-	-- Fetch this key from Firebase Database Private Key :
-	--  obj:auth_service_account( path, exp_time, callback )
-	--
-	fb:auth_service_account('/KEY.json', 60 * 60, function(res)
-		fb:get('/users/000', function(res)
-			print('test_get: ' .. res.status)
-		end)
-		fb:put('/users/000', function(res)
-			print('test_put: ' .. res.status)
-		end, { ['test_put'] = true })
+	local auth = firebase_auth:new('bool-8ba6d')
+	auth:auth_service_account('/KEY.json', 60 * 60, function(session)
+		--
+		-- create new database instance
+		--
+-- 		local database = firebase_database:new(session)
+-- 		print(session.ACCESS_TOKEN)	
+-- 		
+-- 		database:get('/users/000', function(res)
+-- 			print('test_get: ' .. res.status)
+-- 		end)
+-- 		database:put('/users/000', function(res)
+-- 			print('test_put: ' .. res.status)
+-- 		end, { ['test_put'] = true })
+-- 
+-- 		database:get('/users/000', function(res)
+-- 			print('test_post: ' .. res.status)
+-- 		end, { ['test_post'] = true })
+-- 
+-- 		database:delete('/users/000/test_put', function(res)
+-- 			print('test_delete: ' .. res.status)
+-- 		end)
+
+		local messaging = firebase_messaging:new(session)
+		messaging:send({ notification = "Hello World !"})
 		
-		fb:get('/users/000', function(res)
-			print('test_post: ' .. res.status)
-		end, { ['test_post'] = true })
-		
-		fb:delete('/users/000/test_put', function(res)
-			print('test_delete: ' .. res.status)
-		end)
-	end) 
-	--
-	-- request token and execute requests:
-	--
-	-- fb:auth_by_apikey(API_KEY.token, function()
-	-- 	fb:get('/users/000', function(res)
-	-- 		print('test_get: ' .. res.status)
-	-- 	end)
-	-- 	fb:put('/users/000', function(res)
-	-- 		print('test_put: ' .. res.status)
-	-- 	end, { ['test_put'] = true })
-	-- 	fb:get('/users/000', function(res)
-	-- 		print('test_post: ' .. res.status)
-	-- 	end, { ['test_post'] = true })
-	-- 	fb:delete('/users/000/test_put', function(res)
-	-- 		print('test_delete: ' .. res.status)
-	-- 	end)
-	-- end)
+	end)
+	
+
 end
 
