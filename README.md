@@ -1,6 +1,9 @@
 ### Firebase Extension
 The extension can be used on all platforms because it use only `http.request` function inside Defold.
 
+	https://github.com/thetrung/extension-firebase/archive/master.zip
+
+
 ### Notes
 
 **- To test on firebase request**
