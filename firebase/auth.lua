@@ -32,9 +32,11 @@ function Auth:new(project_id)
 		-- Really important:
 		-- https://firebase.google.com/docs/database/rest/auth#generate_an_access_token
 		--
-		local scopes = {
-			"https://www.googleapis.com/auth/firebase.database", 
-			"https://www.googleapis.com/auth/userinfo.email"
+		local scopes = { 
+			'https://www.googleapis.com/auth/firebase.database',
+			'https://www.googleapis.com/auth/firebase.messaging',
+			'https://www.googleapis.com/auth/identitytoolkit',
+			'https://www.googleapis.com/auth/userinfo.email'
 		}
 		local header = {
 			alg = 'RS256',
@@ -70,6 +72,7 @@ function Auth:new(project_id)
 		http.request(url, 'POST', function(self,_,res)
 			if res.status == 200 then
 				local result = cjson.decode(res.response)
+				-- for k,v in pairs(result) do print(k .. " -- " .. v) end 
 				obj.session.ACCESS_TOKEN = result.access_token
 				print("database -- Granted Access. Expire in " 
 					.. math.floor(result.expires_in/60) .. " minutes")

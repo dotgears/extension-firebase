@@ -1,3 +1,22 @@
+-- local messaging = firebase_messaging:new(session)
+-- messaging:send( -- We need recipient to full-fill
+-- {
+-- 	["message"]= {
+-- 		["token"] = '/topics/all',-- <-- this shit is now only obstacle to target certains devices
+-- 		["notification"]= {
+-- 			["title"]= "FCM Message",
+-- 			["body"]= "This is an FCM Message"
+-- 		}
+-- 	}
+-- }, function(res)
+-- 	print("sent")
+-- end)
+-- 
+-- messaging:take('topics/all', function(res)
+-- 	print("taken")
+-- 	print(res.response)
+-- end)
+-- 
 
 Messaging = {}
 
@@ -8,47 +27,39 @@ function Messaging:new(session)
 	function obj:request(method, path, data, callback)
 
 		local headers = {}
-		if session.ID_TOKEN then
-			headers.authorization = string.format('Firebase %s', session.ID_TOKEN)
-		end
-		if session.ACCESS_TOKEN then
-			headers.authorization = string.format('Bearer %s', session.ACCESS_TOKEN)
-		end
+		local source 
+
+		headers.authorization = session.ID_TOKEN and 
+		   string.format('Firebase %s', session.ID_TOKEN)
+		or string.format('Bearer %s', session.ACCESS_TOKEN) 
 
 		if method == 'POST' then
-			if not type(data) == 'table' then
-				print('data -- Incorrect data argument' .. type(data))
-			end
-
-			local src = cjson.encode(data)
-
+			if not type(data) == 'table' then print('data -- Incorrect data as ' .. type(data)) end
 			headers['content-type']    = 'application/json'
-			headers['content-length']  = src:len()
+			source = cjson.encode(data)
 		end
 
 		local url = string.format('https://fcm.googleapis.com/v1/projects/%s/messages%s', session.PROJECT_ID, path)
 		print(url)
-		print(headers.authorization)
-		local callback = function(self,_, res)
+		http.request(url, method, function(self,_,res)
+			-- print(url)
 			local c = res.status
 			if c == 200 or c == 204 then
-				callback(res.response)
+				if callback then callback(res.response) end
 				print(res.response) -- Logging
 			end
 			if c == 401 or c == 403 or c == 400 then
 				print("messaging -- can't send message: " .. res.response)
 			end
-		end
-		
-		http.request(url, method, callback, headers, source, option)
+		end, headers, source, option)
 	end
 
-	function obj:send(message)
-		return obj:request('POST', ':send', message)
+	function obj:send(message, callback)
+		return obj:request('POST', ':send', message, callback)
 	end
 
-	function obj:take(message_id)
-		return obj:request('GET', '/' .. tostring(message_id))
+	function obj:take(message_id, callback)
+		return obj:request('GET', '/' .. tostring(message_id), nil, callback)
 	end
 
 	setmetatable(obj, self)
