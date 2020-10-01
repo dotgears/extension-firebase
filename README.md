@@ -53,11 +53,11 @@ The extension can be used on all platforms because it use only `http.request` fu
 3. Authenticate with firebase Service Account Private Key & send request :
 
        auth:auth_service_account('/KEY.json', 60 * 60, function(session)
-            --
-            -- What happen when we authenticated successfully ?
-            -- Save 'session' object to reuse later, before it expire.
-            --
-            
+		--
+		-- What happen when we authenticated successfully ?
+		-- Save 'session' object to reuse later, before it expire.
+		--
+
 	    -- create database with authenticated session
 	    local database = firebase_database:new(session)
 	    --
