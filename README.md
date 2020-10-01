@@ -66,7 +66,7 @@ The extension can be used on all platforms because it use only `http.request` fu
         database:get('/users/000', function(res)
 			print('test_get: ' .. res.status)
 		end)
-        --
+		--
 	    -- PUT request
 	    --
         database:put('/users/000', function(res)
