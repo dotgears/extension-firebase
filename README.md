@@ -3,12 +3,12 @@ The extension can be used on all platforms because it use only `http.request` fu
 
 ### Notes
 
-**- To test on firebase request :
+**- To test on firebase request**
 
       curl 'https://PROJECT_ID.firebaseio.com/users/uid/data.json?auth=AUTH_TOKEN'
 
 
-**- Note from Google OAuth :
+**- Note from Google OAuth**
 
       Once you have a service account key file, 
       you can use one of the Google API client libraries 
@@ -18,7 +18,7 @@ The extension can be used on all platforms because it use only `http.request` fu
           https://www.googleapis.com/auth/firebase.database
 
 
-**- Actual step of what this extension doing : 
+**- Actual step of what this extension doing**
 
       :: Process of Firebase Secured Access with Google OAuth v2: 
 
@@ -41,16 +41,16 @@ The extension can be used on all platforms because it use only `http.request` fu
 
 ### Usage 
 
-**1. Create Auth :
+**1. Create Auth**
 
        local firebase_auth = require('firebase.auth')
        local auth = firebase_auth:new('PROJECT_ID')
       
-**2. Create database :
+**2. Create database**
 
        local firebase_database = require('firebase.database')
       
-**3. Authenticate with firebase Service Account Private Key & send request :
+**3. Authenticate with firebase Service Account Private Key & send request**
 
        auth:auth_service_account('/KEY.json', 60 * 60, function(session)
 		--
