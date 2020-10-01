@@ -16,3 +16,6 @@ title = extension-firebase
 dependencies = https://github.com/Melsoft-Games/defold-cjson/archive/master.zip
 custom_resources = KEY.json
 
+[library]
+include_dirs = firebase
+
