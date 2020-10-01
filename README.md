@@ -44,7 +44,7 @@ The extension can be used on all platforms because it use only `http.request` fu
 1. Create Auth :
 
        local firebase_auth = require('firebase.auth')
-	 local auth = firebase_auth:new('PROJECT_ID')
+       local auth = firebase_auth:new('PROJECT_ID')
       
 2. Create database :
 
@@ -58,18 +58,29 @@ The extension can be used on all platforms because it use only `http.request` fu
             -- Save 'session' object to reuse later, before it expire.
             --
             
-            database:get('/users/000', function(res)
+	    -- create database with authenticated session
+	    local database = firebase_database:new(session)
+	    --
+	    -- GET request
+	    --
+        database:get('/users/000', function(res)
 			print('test_get: ' .. res.status)
 		end)
-            
-            database:put('/users/000', function(res)
+        --
+	    -- PUT request
+	    --
+        database:put('/users/000', function(res)
 			print('test_put: ' .. res.status)
 		end, { ['test_put'] = true })
-
+	    --
+	    -- POST request
+	    --
 		database:post('/users/000', function(res)
 			print('test_post: ' .. res.status)
 		end, { ['test_post'] = true })
-
+	    --
+	    -- DELETE request
+	    --
 		database:delete('/users/000/test_put', function(res)
 			print('test_delete: ' .. res.status)
 		end)
