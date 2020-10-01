@@ -1,8 +1,8 @@
 ### Firebase Extension
 The extension can be used on all platforms because it use only `http.request` function inside Defold.
 
-### Usage
-(WIP)
+### Notes
+
 - To test on firebase request :
 
       curl 'https://PROJECT_ID.firebaseio.com/users/uid/data.json?auth=AUTH_TOKEN'
@@ -39,5 +39,40 @@ The extension can be used on all platforms because it use only `http.request` fu
       6 - Send RESTful request again with access_token to access database API
 
 
-### TODO
-- Find library or add function to Defold Engine to have RSA signing key ability.
+### Usage 
+
+1. Create Auth :
+
+       local firebase_auth = require('firebase.auth')
+	 local auth = firebase_auth:new('PROJECT_ID')
+      
+2. Create database :
+
+       local firebase_database = require('firebase.database')
+      
+3. Authenticate with firebase Service Account Private Key & send request :
+
+       auth:auth_service_account('/KEY.json', 60 * 60, function(session)
+            --
+            -- What happen when we authenticated successfully ?
+            -- Save 'session' object to reuse later, before it expire.
+            --
+            
+            database:get('/users/000', function(res)
+			print('test_get: ' .. res.status)
+		end)
+            
+            database:put('/users/000', function(res)
+			print('test_put: ' .. res.status)
+		end, { ['test_put'] = true })
+
+		database:post('/users/000', function(res)
+			print('test_post: ' .. res.status)
+		end, { ['test_post'] = true })
+
+		database:delete('/users/000/test_put', function(res)
+			print('test_delete: ' .. res.status)
+		end)
+            
+       end)
+      
